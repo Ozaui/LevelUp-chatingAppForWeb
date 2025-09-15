@@ -2,10 +2,21 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { AuthState } from "../../types/userTypes";
 import { loginUser } from "./userThunk";
 
-const savedUser = localStorage.getItem("auth");
+const STORAGE_KEY = "auth";
 
-const initialState: AuthState = savedUser
-  ? JSON.parse(savedUser)
+const savedUser = localStorage.getItem(STORAGE_KEY);
+
+let parsedUser: AuthState | null = null;
+
+try {
+  parsedUser = savedUser ? JSON.parse(savedUser) : null;
+} catch (error) {
+  console.error("Saved user parse error:", error);
+  parsedUser = null;
+}
+
+const initialState: AuthState = parsedUser
+  ? { ...parsedUser, loading: false, error: null }
   : { id: null, username: null, token: null, loading: false, error: null };
 
 const authSlice = createSlice({
@@ -16,7 +27,9 @@ const authSlice = createSlice({
       state.id = null;
       state.username = null;
       state.token = null;
-      localStorage.removeItem("auth");
+      state.loading = false;
+      state.error = null;
+      localStorage.removeItem(STORAGE_KEY);
     },
   },
   extraReducers: (builder) => {
@@ -30,9 +43,8 @@ const authSlice = createSlice({
         state.id = action.payload.id;
         state.username = action.payload.username;
         state.token = action.payload.token;
-        localStorage.setItem("auth", JSON.stringify(action.payload));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(action.payload));
       })
-
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Login failed";

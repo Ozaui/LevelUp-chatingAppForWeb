@@ -10,6 +10,7 @@ export const loginUser = createAsyncThunk<
 >("auth/loginUser", async (credentials, { rejectWithValue }) => {
   try {
     const response = await loginApi(credentials);
+    localStorage.setItem("user", JSON.stringify(response));
     return response;
   } catch (err) {
     let errorMessage = "Login failed";

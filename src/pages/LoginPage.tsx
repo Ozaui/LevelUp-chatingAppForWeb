@@ -3,16 +3,33 @@ import type { AppDispatch, RootState } from "../store/store";
 import { loginUser } from "../features/User/userThunk";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { validationSchema } from "../schemas/loginPageSchema";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const auth = useSelector((state: RootState) => state.auth);
 
-  const initialValues = { username: "", password: "" };
+  const initialValues = { email: "", password: "" };
 
-  const handleSubmit = (values: typeof initialValues) => {
-    dispatch(loginUser(values));
+  const handleSubmit = async (values: typeof initialValues) => {
+    const resultAction = await dispatch(loginUser(values));
+
+    // Login başarılı ise localStorage'da token saklama
+    if (loginUser.fulfilled.match(resultAction)) {
+      console.log("Login successful:", resultAction.payload);
+    } else {
+      console.log("Login failed:", resultAction.payload);
+    }
   };
+
+  // Login başarılı ise /chat sayfasına yönlendir
+  useEffect(() => {
+    if (auth.token) {
+      navigate("/chat");
+    }
+  }, [auth.token, navigate]);
 
   return (
     <div
@@ -37,12 +54,12 @@ const LoginPage = () => {
             <Form>
               <div style={{ marginBottom: "10px" }}>
                 <Field
-                  name="username"
-                  placeholder="Username"
+                  name="email"
+                  placeholder="Email"
                   style={{ width: "100%", padding: "8px" }}
                 />
                 <ErrorMessage
-                  name="username"
+                  name="email"
                   render={(msg) => (
                     <div style={{ color: "red", fontSize: "12px" }}>{msg}</div>
                   )}
@@ -57,7 +74,7 @@ const LoginPage = () => {
                   style={{ width: "100%", padding: "8px" }}
                 />
                 <ErrorMessage
-                  name="username"
+                  name="password"
                   render={(msg) => (
                     <div style={{ color: "red", fontSize: "12px" }}>{msg}</div>
                   )}

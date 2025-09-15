@@ -12,7 +12,7 @@ export type AuthState = {
 
 // Login sırasında backend'e gönderilecek bilgiler
 export type LoginPayload = {
-  username: string;
+  email: string;
   password: string;
 };
 
