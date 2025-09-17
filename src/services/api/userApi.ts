@@ -41,8 +41,10 @@ export const registerApi = async (
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.log("Register Failed: ", error.message);
-      throw new Error(error.message);
+      const backendMessage =
+        error.response?.data?.message || error.message || "Register failed";
+      console.log("Register Failed: ", backendMessage);
+      throw new Error(backendMessage);
     } else {
       console.log("Unexpected error", error);
       throw new Error("Unknown error occurred");

@@ -45,21 +45,10 @@ export const registerUser = createAsyncThunk<
     const response = await registerApi(newUser);
     return response;
   } catch (err: unknown) {
-    let errorMessage = "Register failed";
-
-    if (err instanceof AxiosError) {
-      // Backend'den gelen mesaj varsa al
-      if (
-        err.response?.data?.message &&
-        typeof err.response.data.message === "string"
-      ) {
-        errorMessage = err.response.data.message;
-      } else {
-        errorMessage = err.message;
-      }
-    } else if (err instanceof Error) {
-      errorMessage = err.message;
-    }
+    // TS uyumlu cast
+    const axiosErr = err as AxiosError<{ message: string }>;
+    const errorMessage =
+      axiosErr.response?.data?.message || axiosErr.message || "Register failed";
 
     return rejectWithValue(errorMessage);
   }
