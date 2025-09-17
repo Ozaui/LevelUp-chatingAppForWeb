@@ -22,3 +22,26 @@ export type LoginResponse = {
   username: string;
   token: string;
 };
+
+// Register sırasında backend'e gönderilecek bilgiler
+export type RegisterPayload = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+// Backend'ten register sonrası dönecek kullanıcı ve token
+export type RegisterResponse = {
+  id: string;
+  username: string;
+  email: string;
+  token: string;
+};
+
+// Form için kullanıcıdan istenen bilgiler
+export type RegisterFormValues = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};

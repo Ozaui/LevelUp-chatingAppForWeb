@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { AuthState } from "../../types/userTypes";
-import { loginUser } from "./userThunk";
+import { loginUser, registerUser } from "./userThunk";
 
 const STORAGE_KEY = "auth";
 
@@ -34,6 +34,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      //Login
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -48,6 +49,20 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Login failed";
+      })
+      //Register
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.id = action.payload.id;
+        state.username = action.payload.username;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Register failed";
       });
   },
 });
