@@ -5,6 +5,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { validationSchema } from "../schemas/loginPageSchema";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { initSocket } from "../features/Message/messageThunk";
 
 const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,9 +28,10 @@ const LoginPage = () => {
   // Login başarılı ise /chat sayfasına yönlendir
   useEffect(() => {
     if (auth.token) {
+      dispatch(initSocket());
       navigate("/chat");
     }
-  }, [auth.token, navigate]);
+  }, [auth.token, dispatch, navigate]);
 
   return (
     <div
